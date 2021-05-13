@@ -6,7 +6,7 @@ var data = [];
 var pointRadius = 2.5;
 var canvas = "";
 var ctx = "";
-var clustersAmount = 3;
+var clustersAmount = 5;
 var clusters = [];
 var clusterSize = 10;
 var border = 10;
@@ -31,7 +31,7 @@ $(document).ready(function(){
 	ctx.strokeStyle = "#000000";
 
 	init();
-	setInterval(step, stepInterval);
+	// setInterval(step, stepInterval);
 });
 
 function init(){
@@ -46,7 +46,6 @@ function init(){
 }
 
 function step(){
-	ctx.clearRect(0, 0, graphSizeX+border*2, graphSizeY+border*2);
 	moveClustersToCenters();
 	clearClusters();
 	assignPointsToClusters();
@@ -54,17 +53,19 @@ function step(){
 }
 
 function draw(){
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	for(var i = 0; i < clustersAmount; i++){
-		ctx.fillStyle = clusters[i].colour;
 		ctx.beginPath();
+		ctx.fillStyle = clusters[i].colour;
 		ctx.rect(clusters[i].center[0]+border, clusters[i].center[1]+border, clusterSize, clusterSize);
-		ctx.stroke();
 		ctx.fill();
+		ctx.stroke();
 		for(var ii = 0; ii < clusters[i].points.length; ii++){
 			ctx.beginPath();
+			ctx.fillStyle = clusters[i].colour;
 			ctx.arc(clusters[i].points[ii][0]+border, clusters[i].points[ii][1]+border, pointRadius, 0, 2*Math.PI);
-			ctx.stroke();
 			ctx.fill();
+			ctx.stroke();
 		}
 	}
 }
@@ -91,14 +92,14 @@ function moveClustersToCenters(){
 			sum[0] += clusters[i].points[ii][0];
 			sum[1] += clusters[i].points[ii][1];
 		}
-		clusters[i].center[0] = sum[0] / parseFloat(clusters[i].points.length);
-		clusters[i].center[1] = sum[1] / parseFloat(clusters[i].points.length);
+		clusters[i].center[0] = sum[0] / clusters[i].points.length;
+		clusters[i].center[1] = sum[1] / clusters[i].points.length;
 	}
 }
 
 function clearClusters(){
 	for(var i = 0; i < clustersAmount; i++){
-		clusters.points = [];
+		clusters[i].points = [];
 	}
 }
 
