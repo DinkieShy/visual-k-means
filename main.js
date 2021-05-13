@@ -6,17 +6,30 @@ var data = [];
 var pointRadius = 2.5;
 var canvas = "";
 var ctx = "";
-var clustersAmount = 5;
+var clustersAmount = 10;
 var clusters = [];
 var clusterSize = 10;
 var border = 10;
 var stepInterval = 1000;
+var dataClassesAmount = clustersAmount;
+var dataClasses = [];
 
 class Cluster{
 	constructor(colour){
 		this.colour = colour;
 		this.points = [];
 		this.center = [Math.floor(Math.random()*graphSizeX), Math.floor(Math.random()*graphSizeY)];
+	}
+}
+
+class DataSource{
+	constructor(x, y, deviation, amount){
+		this.points = [];
+		for(var i = 0; i < amount; i++){
+			var xDistance = x-deviation/2+(Math.random()+Math.random())*deviation/2;
+			var yDistance = y-deviation/2+(Math.random()+Math.random())*deviation/2;
+			this.points.push([xDistance, yDistance]);
+		}
 	}
 }
 
@@ -35,8 +48,14 @@ $(document).ready(function(){
 });
 
 function init(){
-	for(var i = 0; i < totalPoints; i++){
-		data.push([Math.floor(Math.random()*graphSizeX), Math.floor(Math.random()*graphSizeY)]);
+	for(var i = 0; i < dataClassesAmount; i++){
+		dataClasses.push(new DataSource(Math.floor(Math.random()*(graphSizeX-75))+37.5, Math.floor(Math.random()*(graphSizeY-75))+37.5, 150, 30));
+	}
+	for(var i = 0; i < dataClasses.length; i++){
+		for(var ii = 0; ii < dataClasses[i].points.length; ii++){
+			// data.push([Math.floor(Math.random()*graphSizeX), Math.floor(Math.random()*graphSizeY)]);
+			data.push(dataClasses[i].points[ii]);
+		}
 	}
 	for(var i = 0; i < clustersAmount; i++){
 		clusters.push(new Cluster(getRandomColor()));
@@ -71,7 +90,7 @@ function draw(){
 }
 
 function assignPointsToClusters(){
-	for(var i = 0; i < totalPoints; i++){
+	for(var i = 0; i < data.length; i++){
 		minDistance = -1;
 		cluster = -1;
 		for(var ii = 0; ii < clustersAmount; ii++){
@@ -87,13 +106,18 @@ function assignPointsToClusters(){
 
 function moveClustersToCenters(){
 	for(var i = 0; i < clustersAmount; i++){
-		sum = [0, 0];
-		for(var ii = 0; ii < clusters[i].points.length; ii++){
-			sum[0] += clusters[i].points[ii][0];
-			sum[1] += clusters[i].points[ii][1];
+		if(clusters[i].points.length > 0){
+			sum = [0, 0];
+			for(var ii = 0; ii < clusters[i].points.length; ii++){
+				sum[0] += clusters[i].points[ii][0];
+				sum[1] += clusters[i].points[ii][1];
+			}
+			clusters[i].center[0] = sum[0] / clusters[i].points.length;
+			clusters[i].center[1] = sum[1] / clusters[i].points.length;
 		}
-		clusters[i].center[0] = sum[0] / clusters[i].points.length;
-		clusters[i].center[1] = sum[1] / clusters[i].points.length;
+		else{
+			clusters[i].center = [Math.floor(Math.random()*graphSizeX), Math.floor(Math.random()*graphSizeY)];
+		}
 	}
 }
 
