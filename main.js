@@ -31,7 +31,7 @@ $(document).ready(function(){
 	ctx.strokeStyle = "#000000";
 
 	init();
-	// setInterval(step, stepInterval);
+	setInterval(step, stepInterval);
 });
 
 function init(){
