@@ -46,7 +46,7 @@ function init(){
 }
 
 function step(){
-	ctx.clearRect(0, 0, graphSizeX+border, graphSizeY+border);
+	ctx.clearRect(0, 0, graphSizeX+border*2, graphSizeY+border*2);
 	moveClustersToCenters();
 	clearClusters();
 	assignPointsToClusters();
